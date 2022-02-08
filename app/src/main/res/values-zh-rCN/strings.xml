@@ -13,4 +13,8 @@
     <string name="off">关</string>
     <string name="switch_now">开关现在是 </string>
     <string name="undo">撤销</string>
+    <string name="enter_email">输入邮箱:</string>
+    <string name="type_email">邮箱地址</string>
+    <string name="enter_password">输入密码</string>
+    <string name="login">登录</string>
 </resources>
