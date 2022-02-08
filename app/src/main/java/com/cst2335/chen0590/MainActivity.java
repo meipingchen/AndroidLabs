@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.email_login);
+        setContentView(R.layout.activity_main_linear);
 
 
         Button btn = (Button) findViewById(R.id.button2);
