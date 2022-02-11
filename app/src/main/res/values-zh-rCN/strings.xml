@@ -13,8 +13,15 @@
     <string name="off">关</string>
     <string name="switch_now">开关现在是 </string>
     <string name="undo">撤销</string>
-    <string name="enter_email">输入邮箱:</string>
+    <string name="enter_email_address">输入邮箱:</string>
     <string name="type_email">邮箱地址</string>
     <string name="enter_password">输入密码</string>
     <string name="login">登录</string>
+    <string name="profile">你的文档</string>
+    <string name="name">你的名字:</string>
+    <string name="enter_name">输入你的名字</string>
+    <string name="email">你的邮箱：</string>
+    <string name="enter_email">输入你的邮箱</string>
+    <string name="picture">你的图片</string>
+    <string name="click_btn_get_pic">按上方按钮拍照</string>
 </resources>

@@ -12,8 +12,15 @@
     <string name="off">off</string>
     <string name="switch_now">The switch is now&#160;</string>
     <string name="undo">undo</string>
-    <string name="enter_email">Enter your email address:</string>
+    <string name="enter_email_address">Enter your email address:</string>
     <string name="type_email">Type email here</string>
     <string name="enter_password">Type your password:</string>
     <string name="login">login</string>
+    <string name="profile">Your profile</string>
+    <string name="name">Your name:</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="email">Your email:</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="picture">Your picture</string>
+    <string name="click_btn_get_pic">Click the button above to take a picture</string>
 </resources>
