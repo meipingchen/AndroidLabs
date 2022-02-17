@@ -22,6 +22,21 @@ import android.widget.ImageView;
 public class ProfileActivity extends AppCompatActivity {
     public final static String TAG = "PROFILE_ACTIVITY";
     ImageView imgView;
+    ActivityResultLauncher<Intent> myPictureTakerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult()
+            ,new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Bitmap imgbitmap = (Bitmap) data.getExtras().get("data");
+                        imgView.setImageBitmap(imgbitmap);
+
+                    }
+                    else if(result.getResultCode() == Activity.RESULT_CANCELED)
+                        Log.i(TAG, "User refused to capture a picture.");
+                }
+            } );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +56,14 @@ public class ProfileActivity extends AppCompatActivity {
                     if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                         myPictureTakerLauncher.launch(takePictureIntent);
                     }
+
                 }
+
             });
 
         }
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -81,21 +100,5 @@ public class ProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e(TAG,"In function" + "onActivityResult");
     }
-
-    ActivityResultLauncher<Intent> myPictureTakerLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult()
-            ,new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        Bitmap imgbitmap = (Bitmap) data.getExtras().get("data");
-                        imgView.setImageBitmap(imgbitmap);
-                    }
-                    else if(result.getResultCode() == Activity.RESULT_CANCELED)
-                        Log.i(TAG, "User refused to capture a picture.");
-                }
-            } );
-
 
 }
