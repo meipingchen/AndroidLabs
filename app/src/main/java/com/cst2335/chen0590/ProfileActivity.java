@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,7 +32,6 @@ public class ProfileActivity extends AppCompatActivity {
                         Intent data = result.getData();
                         Bitmap imgbitmap = (Bitmap) data.getExtras().get("data");
                         imgView.setImageBitmap(imgbitmap);
-
                     }
                     else if(result.getResultCode() == Activity.RESULT_CANCELED)
                         Log.i(TAG, "User refused to capture a picture.");
@@ -61,8 +61,16 @@ public class ProfileActivity extends AppCompatActivity {
 
             });
 
-        }
+        Button chatButton = (Button) findViewById(R.id.button);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToFile = new Intent(ProfileActivity.this,ChatRoomActivity.class);
+                startActivity(goToFile);
+            }
+        });
 
+        }
 
     @Override
     protected void onStart() {
