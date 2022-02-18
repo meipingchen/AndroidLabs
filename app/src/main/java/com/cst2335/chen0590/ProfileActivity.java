@@ -30,6 +30,7 @@ public class ProfileActivity extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Bitmap imgbitmap = (Bitmap) data.getExtras().get("data");
+                        imgView = (ImageView)findViewById(R.id.imageButton2);
                         imgView.setImageBitmap(imgbitmap);
 
                     }
