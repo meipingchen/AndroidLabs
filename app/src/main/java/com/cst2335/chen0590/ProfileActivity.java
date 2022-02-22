@@ -72,41 +72,4 @@ public class ProfileActivity extends AppCompatActivity {
 
         }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.e(TAG,"In function" + "onStart");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e(TAG,"In function" + "onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.e(TAG,"In function" + "onPause");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.e(TAG,"In function" + "onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e(TAG,"In function" + "onDestroy");
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG,"In function" + "onActivityResult");
-    }
-
 }
