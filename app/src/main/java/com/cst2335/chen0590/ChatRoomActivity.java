@@ -1,6 +1,7 @@
 package com.cst2335.chen0590;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +52,26 @@ public class ChatRoomActivity extends AppCompatActivity implements View.OnClickL
         default:
             break;
         }
+
+        ListView myList = (ListView) findViewById(R.id.listview1);
+        myList.setAdapter(adapter = new MessageAdapter());
+        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ChatRoomActivity.this);
+                alertDialogBuilder.setTitle("Do you want to delete this?")
+                        .setMessage("The selected row is:" + i + "The database id is:" + l)
+                        .setPositiveButton("Yes", (click, arg) -> {
+                            message.remove(i);
+                            adapter.notifyDataSetChanged();
+                        })
+                        .setNegativeButton("No", (click, arg) -> { })
+
+                        .create().show();
+
+            }
+        });
+
     }
 
         private void showListViewRight(){
