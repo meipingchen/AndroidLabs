@@ -1,43 +1,63 @@
 package com.cst2335.chen0590;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Context;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Message;
-import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChatRoomActivity extends AppCompatActivity implements View.OnClickListener{
     MessageAdapter adapter = new MessageAdapter();
     List<ChatMessage> message = new ArrayList<ChatMessage>();
 
+    MyOpenHelper myOpener;
+    SQLiteDatabase theDatabase;
+
+    ArrayList<ChatMessage> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
+        myOpener = new MyOpenHelper(this);
+        theDatabase = myOpener.getWritableDatabase();
+
+        Cursor result = theDatabase.rawQuery("Select * from "
+                + MyOpenHelper.TABLE_NAME + ";", null);
+
+        int idIndex = result.getColumnIndex(MyOpenHelper.COL_ID);
+        int messageIndex = result.getColumnIndex(MyOpenHelper.COL_MESSAGE);
+
+        while (result.moveToNext()) {
+
+            int id = result.getInt(idIndex);
+            String message = result.getString(messageIndex);
+
+            list.add(new ChatMessage(true, message, id));
+            list.add(new ChatMessage(false, message, id));
+        }
+
         Button leftButton = (Button) findViewById(R.id.button_left);
         Button rightButton = (Button) findViewById(R.id.button_right);
         leftButton.setOnClickListener(this);
         rightButton.setOnClickListener(this);
+
+        printCursor(result,1);
 
     }
 
@@ -55,67 +75,68 @@ public class ChatRoomActivity extends AppCompatActivity implements View.OnClickL
 
         ListView myList = (ListView) findViewById(R.id.listview1);
         myList.setAdapter(adapter = new MessageAdapter());
-        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ChatRoomActivity.this);
-                alertDialogBuilder.setTitle("Do you want to delete this?")
-                        .setMessage("The selected row is:" + i + "The database id is:" + l)
-                        .setPositiveButton("Yes", (click, arg) -> {
-                            message.remove(i);
-                            adapter.notifyDataSetChanged();
-                        })
-                        .setNegativeButton("No", (click, arg) -> { })
+        myList.setOnItemClickListener((adapterView, view1, i, l) -> {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ChatRoomActivity.this);
+            alertDialogBuilder.setTitle("Do you want to delete this?")
+                    .setMessage("The selected row is:" + i + "The database id is:" + l)
+                    .setPositiveButton("Yes", (click, arg) -> {
+                        message.remove(i);
+                        adapter.notifyDataSetChanged();
+                    })
+                    .setNegativeButton("No", (click, arg) -> { })
 
-                        .create().show();
+                    .create().show();
 
-            }
         });
-
     }
-
         private void showListViewRight(){
-            ChatMessage rightMessage = new ChatMessage();
             EditText editText = (EditText) findViewById(R.id.typeMessage);
             ListView myList = (ListView) findViewById(R.id.listview1);
+            myList.setAdapter(adapter);
+            String typeMessage = editText.getText().toString();
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.COL_MESSAGE, typeMessage);
+            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 1);
+            long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
+            ChatMessage rightMessage = new ChatMessage(true, typeMessage, id);
             rightMessage.setTextViewInput(editText.getText().toString());
             rightMessage.setType(adapter.SEND_RIGHT);
-            myList.setAdapter(adapter);
             message.add(rightMessage);
             adapter.notifyDataSetChanged();
             editText.setText("");
         }
+
         private void showListViewLeft(){
-            ChatMessage leftMessage = new ChatMessage();
             EditText editText = (EditText) findViewById(R.id.typeMessage);
             ListView myList = findViewById(R.id.listview1);
+            myList.setAdapter(adapter);
+            String typeMessage = editText.getText().toString();
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.COL_MESSAGE, typeMessage);
+            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 0);
+            long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
+            ChatMessage leftMessage = new ChatMessage(true, typeMessage, id);
             leftMessage.setTextViewInput(editText.getText().toString());
             leftMessage.setType(adapter.SEND_LEFT);
-            myList.setAdapter(adapter);
             message.add(leftMessage);
             adapter.notifyDataSetChanged();
             editText.setText("");
     }
 
     public class ChatMessage{
-        private int imageViewPerson;
         private String textViewInput;
         private int type;
+        boolean sendOrReceive;
+        long id;
 
-        public ChatMessage(){ }
-        public ChatMessage(int imageViewPerson, String textViewInput) {
-            this.imageViewPerson = imageViewPerson;
-            this.textViewInput = textViewInput; }
+        public ChatMessage(boolean sendOrReceive, String textViewInput, long id) {
+            this.textViewInput = textViewInput;
+            this.sendOrReceive = sendOrReceive;
+            this.id = id;
+        }
+
         public int getType(){ return type; }
         public void setType(int type){ this.type = type; }
-
-        public int getImageViewPerson() {
-            return imageViewPerson;
-        }
-
-        public void setImageViewPerson(int imageViewPerson) {
-            this.imageViewPerson = imageViewPerson;
-        }
 
         public String getTextViewInput() {
             return textViewInput;
@@ -167,6 +188,34 @@ public class ChatRoomActivity extends AppCompatActivity implements View.OnClickL
             lView.setText(message.get(position).getTextViewInput());
             return convertView;
         }
+    }
+
+    public void printCursor (Cursor c,int version){
+
+        int numberColumns = c.getColumnCount();
+        String[] nameColumns = c.getColumnNames();
+        int numberRows = c.getCount();
+
+        c.moveToFirst();
+
+            int typeIndex = c.getColumnIndex(MyOpenHelper.COL_MESSAGE);
+            int idColIndex = c.getColumnIndex(MyOpenHelper.COL_ID);
+            int sOrRColIndex=c.getColumnIndex(MyOpenHelper.COL_SEND_RECEIVE);
+        do {
+            String type = c.getString(typeIndex);
+            long id = c.getLong(idColIndex);
+            int sOrR = c.getInt(sOrRColIndex);
+
+            String rowValue = String.format("ID: " + id + ", Message: " + type + ", SendOrReceive: " + sOrR);
+            Log.i("ROW OF RESULTS", rowValue);
+
+        } while (c.moveToNext());
+
+        Log.i("Version number: ", Integer.toString(version));
+        Log.i("Number of columns: ", Integer.toString(numberColumns));
+        Log.i("Name of columns: ", Arrays.toString(nameColumns));
+        Log.i("Number of rows: ", Integer.toString(numberRows));
+
     }
 }
 
