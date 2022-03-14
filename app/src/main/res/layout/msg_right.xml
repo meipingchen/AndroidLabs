@@ -11,8 +11,8 @@
         android:layout_weight="1"
         android:gravity="right">
 
-        <TextView
-            android:id="@+id/text_input"
+        <EditText
+            android:id="@+id/text_inputr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"

@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ChatRoomActivity extends AppCompatActivity implements View.OnClickListener{
+public class ChatRoomActivity extends AppCompatActivity {
     MessageAdapter adapter = new MessageAdapter();
-    List<ChatMessage> message = new ArrayList<ChatMessage>();
-
     MyOpenHelper myOpener;
     SQLiteDatabase theDatabase;
 
@@ -54,78 +52,64 @@ public class ChatRoomActivity extends AppCompatActivity implements View.OnClickL
 
         Button leftButton = (Button) findViewById(R.id.button_left);
         Button rightButton = (Button) findViewById(R.id.button_right);
-        leftButton.setOnClickListener(this);
-        rightButton.setOnClickListener(this);
-
-        printCursor(result,1);
-
-    }
-
-    public void onClick(View view){
-        switch (view.getId()){
-        case R.id.button_left:
-            showListViewLeft();
-            break;
-        case R.id.button_right:
-            showListViewRight();
-            break;
-        default:
-            break;
-        }
+        EditText typeMessage = findViewById(R.id.typeMessage);
 
         ListView myList = (ListView) findViewById(R.id.listview1);
         myList.setAdapter(adapter = new MessageAdapter());
-        myList.setOnItemClickListener((adapterView, view1, i, l) -> {
+
+        leftButton.setOnClickListener(click -> {
+            String typeText = typeMessage.getText().toString();
+
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.COL_MESSAGE, typeText);
+            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 1);
+            long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
+
+            ChatMessage newMsg = new ChatMessage(true, typeText, id);
+
+            list.add(newMsg);
+            typeMessage.setText("");
+            adapter.notifyDataSetChanged();
+        });
+
+        rightButton.setOnClickListener(click -> {
+            String typeText = typeMessage.getText().toString();
+
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.COL_MESSAGE, typeText);
+            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 1);
+            long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
+
+            ChatMessage newMessage = new ChatMessage(false, typeText, id);
+
+            list.add(newMessage);
+            typeMessage.setText("");
+            adapter.notifyDataSetChanged();
+        });
+
+        myList.setOnItemLongClickListener((adapterView, view1, i, l) -> {
+            ChatMessage deleteRow = list.get(i);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ChatRoomActivity.this);
             alertDialogBuilder.setTitle("Do you want to delete this?")
                     .setMessage("The selected row is:" + i + "The database id is:" + l)
                     .setPositiveButton("Yes", (click, arg) -> {
-                        message.remove(i);
+                        list.remove(i);
+                        theDatabase.delete(MyOpenHelper.TABLE_NAME,
+                                MyOpenHelper.COL_ID + "=?", new String[]{Long.toString(deleteRow.getId())});
                         adapter.notifyDataSetChanged();
                     })
                     .setNegativeButton("No", (click, arg) -> { })
 
                     .create().show();
-
+            return true;
         });
-    }
-        private void showListViewRight(){
-            EditText editText = (EditText) findViewById(R.id.typeMessage);
-            ListView myList = (ListView) findViewById(R.id.listview1);
-            myList.setAdapter(adapter);
-            String typeMessage = editText.getText().toString();
-            ContentValues newRow = new ContentValues();
-            newRow.put(MyOpenHelper.COL_MESSAGE, typeMessage);
-            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 1);
-            long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
-            ChatMessage rightMessage = new ChatMessage(true, typeMessage, id);
-            rightMessage.setTextViewInput(editText.getText().toString());
-            rightMessage.setType(adapter.SEND_RIGHT);
-            message.add(rightMessage);
-            adapter.notifyDataSetChanged();
-            editText.setText("");
-        }
 
-        private void showListViewLeft(){
-            EditText editText = (EditText) findViewById(R.id.typeMessage);
-            ListView myList = findViewById(R.id.listview1);
-            myList.setAdapter(adapter);
-            String typeMessage = editText.getText().toString();
-            ContentValues newRow = new ContentValues();
-            newRow.put(MyOpenHelper.COL_MESSAGE, typeMessage);
-            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 0);
-            long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
-            ChatMessage leftMessage = new ChatMessage(true, typeMessage, id);
-            leftMessage.setTextViewInput(editText.getText().toString());
-            leftMessage.setType(adapter.SEND_LEFT);
-            message.add(leftMessage);
-            adapter.notifyDataSetChanged();
-            editText.setText("");
+        printCursor(result,1);
+
     }
 
     public class ChatMessage{
         private String textViewInput;
-        private int type;
         boolean sendOrReceive;
         long id;
 
@@ -134,59 +118,49 @@ public class ChatRoomActivity extends AppCompatActivity implements View.OnClickL
             this.sendOrReceive = sendOrReceive;
             this.id = id;
         }
-
-        public int getType(){ return type; }
-        public void setType(int type){ this.type = type; }
-
         public String getTextViewInput() {
             return textViewInput;
         }
-
-        public void setTextViewInput(String textViewInput) {
-            this.textViewInput = textViewInput;
+        public boolean isSendOrReceive(){
+            return sendOrReceive;
         }
+        public long getId(){return id;}
+
+
     }
 
     public class MessageAdapter extends BaseAdapter{
 
-        public final static int SEND_LEFT = 0;
-        public final static int SEND_RIGHT = 1;
-
         @Override
-        public int getItemViewType(int position) {
-            if (0 == message.get(position).getType()){
-                return SEND_LEFT;
-            } else if (1 == message.get(position).getType()){
-                return SEND_RIGHT;
-            } else{
-                return 0;
-            }
+        public int getCount() {
+            return list.size();
         }
 
         @Override
-        public int getCount() { return message.size(); }
-
-        public Object getItem(int position){
-            return message.get(position); }
+        public Object getItem(int position) {
+            return list.get(position).textViewInput;
+        }
 
         @Override
-        public long getItemId(int position) { return (long) position; }
-
+        public long getItemId(int position) {
+            return position;
+        }
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+
             LayoutInflater inflater = getLayoutInflater();
-            switch (getItemViewType(position)){
-                case SEND_LEFT:
-                    convertView = inflater.inflate(R.layout.msg_left,parent,false);
-                    break;
-                case SEND_RIGHT:
-                   convertView = inflater.inflate(R.layout.msg_right,parent,false);
-                default:
-                    break;
+
+            if (list.get(position).isSendOrReceive()) {
+                View newView1 = inflater.inflate(R.layout.msg_left, parent, false);
+                EditText messageTyped1 = newView1.findViewById(R.id.text_input);
+                messageTyped1.setText(getItem(position).toString());
+                return newView1;
+            } else {
+                View newView2 = inflater.inflate(R.layout.msg_right, parent, false);
+                EditText messageTyped2 = newView2.findViewById(R.id.text_inputr);
+                messageTyped2.setText(getItem(position).toString());
+                return newView2;
             }
-            TextView lView= (TextView) convertView.findViewById(R.id.text_input);
-            lView.setText(message.get(position).getTextViewInput());
-            return convertView;
         }
     }
 
