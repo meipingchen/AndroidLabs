@@ -40,14 +40,19 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         int idIndex = result.getColumnIndex(MyOpenHelper.COL_ID);
         int messageIndex = result.getColumnIndex(MyOpenHelper.COL_MESSAGE);
+        int booleanIndex = result.getColumnIndex(MyOpenHelper.COL_SEND_RECEIVE);
 
         while (result.moveToNext()) {
 
             int id = result.getInt(idIndex);
             String message = result.getString(messageIndex);
+            boolean sOrR;
+            if(result.getInt(booleanIndex) == 0)
+                sOrR = false;
+            else
+                sOrR = true;
 
-            list.add(new ChatMessage(true, message, id));
-            list.add(new ChatMessage(false, message, id));
+            list.add(new ChatMessage(sOrR, message, id));
         }
 
         Button leftButton = (Button) findViewById(R.id.button_left);
@@ -77,7 +82,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
             ContentValues newRow = new ContentValues();
             newRow.put(MyOpenHelper.COL_MESSAGE, typeText);
-            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 1);
+            newRow.put(MyOpenHelper.COL_SEND_RECEIVE, 0);
             long id = theDatabase.insert(MyOpenHelper.TABLE_NAME, null, newRow);
 
             ChatMessage newMessage = new ChatMessage(false, typeText, id);
