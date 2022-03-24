@@ -3,7 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2295" />
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout-v31/email_login.xml" value="0.22" />
         <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout/activity_main.xml" value="0.4466666666666667" />
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout/activity_main_grid.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout/activity_main_linear.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout/activity_main_relative.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout/email_login.xml" value="0.5" />
+        <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/layout/test.xml" value="0.33125" />
         <entry key="..\:/Users/chenh/Desktop/computer/level_3/CST2355/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1109375" />
       </map>
     </option>
