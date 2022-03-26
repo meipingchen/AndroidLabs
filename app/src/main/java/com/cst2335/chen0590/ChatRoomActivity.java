@@ -2,7 +2,10 @@ package com.cst2335.chen0590;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -21,17 +24,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ChatRoomActivity extends AppCompatActivity {
+    public static FragmentManager fragmentManager;
     MessageAdapter adapter = new MessageAdapter();
     MyOpenHelper myOpener;
     SQLiteDatabase theDatabase;
-
+    public static boolean isTablet;
     ArrayList<ChatMessage> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
-
+        isTablet = findViewById(R.id.framelayout1) != null;
         myOpener = new MyOpenHelper(this);
         theDatabase = myOpener.getWritableDatabase();
 
@@ -109,6 +113,37 @@ public class ChatRoomActivity extends AppCompatActivity {
             return true;
         });
 
+        myList.setOnItemClickListener((adapterView, view, position, id) -> {
+
+            boolean isSend=list.get(position).sendOrReceive;
+            String text=list.get(position).textViewInput;
+
+            DetailsFragment fragment = new DetailsFragment();
+            Bundle bundle=new Bundle();
+
+            //put message, id and boolean in bundle
+           bundle.putString("Message",text);
+           bundle.putLong("positionID", id);
+           bundle.putBoolean("isSend", isSend);
+
+          //  fragment.setArguments(bundle);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            //go to next activity
+            if (isTablet) {
+
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.framelayout1, fragment)
+                        .commit();
+            } else {
+
+                Intent intent1 = new Intent(ChatRoomActivity.this, EmptyActivity.class);
+                intent1.putExtra("MessageTrans",bundle);
+                startActivity(intent1);
+
+            }
+        });
+
         printCursor(result,1);
 
     }
@@ -157,12 +192,12 @@ public class ChatRoomActivity extends AppCompatActivity {
 
             if (list.get(position).isSendOrReceive()) {
                 View newView1 = inflater.inflate(R.layout.msg_left, parent, false);
-                EditText messageTyped1 = newView1.findViewById(R.id.text_input);
+                TextView messageTyped1 = newView1.findViewById(R.id.text_input);
                 messageTyped1.setText(getItem(position).toString());
                 return newView1;
             } else {
                 View newView2 = inflater.inflate(R.layout.msg_right, parent, false);
-                EditText messageTyped2 = newView2.findViewById(R.id.text_inputr);
+                TextView messageTyped2 = newView2.findViewById(R.id.text_inputr);
                 messageTyped2.setText(getItem(position).toString());
                 return newView2;
             }
