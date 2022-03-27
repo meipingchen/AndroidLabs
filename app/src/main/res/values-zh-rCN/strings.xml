@@ -24,4 +24,13 @@
     <string name="enter_email">输入你的邮箱</string>
     <string name="picture">你的图片</string>
     <string name="click_btn_get_pic">按上方按钮拍照</string>
+    <string name="choice1"></string>
+    <string name="choice2"></string>
+    <string name="choice3"></string>
+    <string name="choice4">不要点我</string>
+    <string name="chatpage">聊天</string>
+    <string name="weather_forecast">天气预报</string>
+    <string name="gobacktologin">返回登录</string>
+    <string name="open"></string>
+    <string name="close"></string>
 </resources>

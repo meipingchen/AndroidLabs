@@ -70,6 +70,15 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        Button toolbarButton = (Button) findViewById(R.id.button2);
+        toolbarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToFile = new Intent(ProfileActivity.this,TestToolbar.class);
+                startActivity(goToFile);
+            }
+        });
+
         }
 
 }
