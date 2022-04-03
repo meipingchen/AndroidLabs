@@ -49,14 +49,6 @@ public class DetailsFragment extends Fragment {
         hide.setOnClickListener(view1 -> {
             if (ChatRoomActivity.isTablet) {
                 ChatRoomActivity.fragmentManager.beginTransaction().remove(this).commit();
-//                    getActivity().onBackPressed();
-//                    getActivity().getSupportFragmentManager().popBackStack();
-//
-//                    DetailsFragment fragment=new DetailsFragment();
-//                    getChildFragmentManager()
-//                            .beginTransaction()
-//                            .replace(R.id.flbox1,fragment)
-//                            .commit();
             } else {
                 getActivity().finish();
             }
